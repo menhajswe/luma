@@ -6,35 +6,42 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.Registration;
 
-public class TestRegistration {
-    private final String firstName = "zack";
-    private final String lastName = "jack";
+import java.time.Duration;
 
+public class TestRegistration {
     private WebDriver driver;
     private Registration registration;
+    private WebDriverWait wait;
 
-//    @BeforeEach
+    @BeforeEach
     public void setup() {
         driver = new ChromeDriver();
         driver.get(LumaConstants.CREATE_USER_URL.getValue());
-        registration = new Registration(firstName, lastName, LumaConstants.EMAIL.getValue(), LumaConstants.PASSWORD.getValue());
+        registration = new Registration(driver);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
     }
 
-//    @AfterEach
-    public void teardown() {
+    @AfterEach
+    public void tearDown() {
         driver.quit();
     }
 
-//    @Test
+    @Test
     public void testRegistration() {
-        driver.findElement(By.xpath("//input[@id='firstname']")).sendKeys(registration.getFirstName());
-        driver.findElement(By.xpath("//input[@id='lastname']")).sendKeys(registration.getLastName());
-        driver.findElement(By.xpath("//input[@id='email_address']")).sendKeys(registration.getEmail());
-        driver.findElement(By.xpath("//input[@id='password']")).sendKeys(registration.getPassWorld());
-        driver.findElement(By.xpath("//input[@id='password-confirmation']")).sendKeys(registration.getPassWorld());
-        driver.findElement(By.xpath("//button[@class='action submit primary']/span[.='Create an Account']")).click();
+        String firstName = "Jon";
+        String lastName = "Doe";
+        registration.userRegistration(firstName, lastName);
+        assert driver.getCurrentUrl().contains("https://magento.softwaretestingboard.com/customer/account");
+        WebElement dashboard = driver.findElement(By.xpath("/html/body/div[2]/main/div[2]/div[1]/div[3]/div[2]/div/strong/span"));
+        wait.until(ExpectedConditions.visibilityOf(dashboard));
+//        assert driver.findElement(By.xpath("/html/body/div[2]/main/div[2]/div[1]/div[3]/div[2]"))
+//                .getText().contains(firstName + " " + lastName);
     }
 }
