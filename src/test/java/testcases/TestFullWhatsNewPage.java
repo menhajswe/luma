@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.Script;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -19,8 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestFullWhatsNewPage {
     private static final String baseUrl = "https://magento.softwaretestingboard.com/what-is-new.html";
@@ -173,6 +173,55 @@ public class TestFullWhatsNewPage {
         wait.until(ExpectedConditions.urlToBe("https://magento.softwaretestingboard.com/montana-wind-jacket.html"));
         String currentUrl = driver.getCurrentUrl();
         assertEquals("https://magento.softwaretestingboard.com/montana-wind-jacket.html", currentUrl);
+    }
+
+    @Test
+    public void testNewInWomenDepartment() {
+        List<String> expectedValues = List.of(
+                "Hoodies & Sweatshirts",
+                "Jackets",
+                "Tees",
+                "Bras & Tanks",
+                "Pants",
+                "Shorts");
+        String script = """
+                const list = [];
+                document.getElementsByClassName('title')[4].nextElementSibling.childNodes.forEach( el => {
+                    if (el.textContent.trim().length > 0) {
+                    list.push(el.textContent);}
+                });
+                return list;
+                """;
+        List<String> sideBarValues = (List<String>) js.executeScript(script);
+        assertNotNull(sideBarValues);
+        for (String el: sideBarValues) {
+            assertTrue(expectedValues.contains(el));
+        }
+    }
+
+    @Test
+    public void testNewInMenDepartment() {
+        List<String> expectedValues = List.of(
+                "Hoodies & Sweatshirts",
+                "Jackets",
+                "Tees",
+                "Tanks",
+                "Pants",
+                "Shorts");
+        String script = """
+                const list = [];
+                document.getElementsByClassName('title')[5].nextElementSibling.childNodes.forEach( el => {
+                    if (el.textContent.trim().length > 0) {
+                    list.push(el.textContent);}
+                });
+                return list;
+                """;
+        List<String> sideBarValues = (List<String>) js.executeScript(script);
+        assertNotNull(sideBarValues);
+        for (String el: sideBarValues) {
+            System.out.println("Comparing " + el );
+            assertTrue(expectedValues.contains(el));
+        }
     }
 
     private List<String> extractLines(String text) {
