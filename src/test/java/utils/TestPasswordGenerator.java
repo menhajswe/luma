@@ -24,10 +24,10 @@ public class TestPasswordGenerator {
     }
 
     private static int randomIntGenerator() {
-        return (int) (Math.random() * 1000);
+        return (int) (Math.random() * 1000) + 2500;
     }
 
-    public static void emailAndPasswordWriterToFile() throws IOException {
+    public static Map<String, String> emailAndPasswordWriterToFile() throws IOException {
         String email = emailGenerator();
         String password = passwordGenerator();
         Map<String, String> emailAndPassword = Map.of("email", email, "password", password);
@@ -39,5 +39,7 @@ public class TestPasswordGenerator {
         } catch (IOException e) {
             LOGGER.error(() -> "An error occurred." + e.getMessage());
         }
+
+        return emailAndPassword;
     }
 }

@@ -2,6 +2,7 @@ package pages;
 
 import constants.LumaConstants;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import utils.FileReader;
 
@@ -20,8 +21,20 @@ public class Login {
 
     public void userLogin() {
         List<Map<String, String>> userAndPassword = FileReader.fileReader();
-        driver.findElement(emailLocator).sendKeys(userAndPassword.getLast().get("email"));
-        driver.findElement(passwordLocator).sendKeys(userAndPassword.getLast().get("password"));
+        String email = userAndPassword.getLast().get("email");
+        String password = userAndPassword.getLast().get("password");
+        driver.findElement(emailLocator).sendKeys(email);
+        driver.findElement(passwordLocator).sendKeys(password);
+        driver.findElement(loginButtonLocator).click();
+    }
+
+    public void userLoginWithCookieCredentials() {
+        Cookie emailCookie = driver.manage().getCookieNamed("email");
+        Cookie passwordCookie = driver.manage().getCookieNamed("password");
+        assert emailCookie != null;
+        driver.findElement(emailLocator).sendKeys(emailCookie.getValue());
+        assert passwordCookie != null;
+        driver.findElement(passwordLocator).sendKeys(passwordCookie.getValue());
         driver.findElement(loginButtonLocator).click();
     }
 

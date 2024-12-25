@@ -7,6 +7,7 @@ public enum LumaConstants {
     BASE_URL("https://magento.softwaretestingboard.com"),
     CREATE_USER_URL("https://magento.softwaretestingboard.com/customer/account/create"),
     SIGNIN_URL("https://magento.softwaretestingboard.com/customer/account/login"),
+    HOME_PAGE_URL("https://magento.softwaretestingboard.com/"),
     USER_NAME("test"),
     EMAIL(System.getenv("testEmail")),
     PASSWORD(System.getenv("testPassword"));

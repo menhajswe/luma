@@ -2,6 +2,7 @@ package pages;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import utils.FileReader;
 
@@ -14,6 +15,7 @@ import static utils.TestPasswordGenerator.emailAndPasswordWriterToFile;
 public class Registration {
     private static final Logger LOGGER = LoggerFactory.getLogger(Registration.class);
     private WebDriver driver;
+    Map<String, String> loginCredentials;
 
     private By firstNameLocator = By.xpath("//input[@id='firstname']");
     private By lastNameLocator = By.xpath("//input[@id='lastname']");
@@ -27,7 +29,7 @@ public class Registration {
         // Using randomly generated user and password registration and storing the these
         // mocked email and passwords for later login confirmation.
         try {
-            emailAndPasswordWriterToFile();
+            loginCredentials = emailAndPasswordWriterToFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -45,5 +47,31 @@ public class Registration {
         // alt path: By.xpath("//button[@class='action submit primary']/span[.='Create an Account']")
     }
 
+    public void userRegistrationAddingToCookie(String firstName, String lastName) {
+        driver.findElement(firstNameLocator).sendKeys(firstName);
+        driver.findElement(lastNameLocator).sendKeys(lastName);
+        String email = loginCredentials.get("email");
+        String password = loginCredentials.get("password");
+        driver.findElement(emailLocator).sendKeys(email);
+        driver.findElement(passwordLocator).sendKeys(password);
+        driver.findElement(confirmPasswordLocator).sendKeys(password);
+        driver.findElement(submitButtonLocator).click();
+        // alt path: By.xpath("//button[@class='action submit primary']/span[.='Create an Account']")
 
+        // Storing login validation for logout purpose.
+        Cookie emailCookie = new Cookie("email", email);
+        Cookie passwordCookie = new Cookie("password", password);
+        driver.manage().addCookie(emailCookie);
+        driver.manage().addCookie(passwordCookie);
+    }
+
+    public boolean isCookieExist() {
+        Cookie cookieEmail = driver.manage().getCookieNamed("email");
+        Cookie cookiePass = driver.manage().getCookieNamed("password");
+        if ((cookieEmail == null || cookieEmail.getValue().isEmpty()) &&
+                (cookiePass == null || cookiePass.getValue().isEmpty())) {
+            return false;
+        }
+        return true;
+    }
 }
