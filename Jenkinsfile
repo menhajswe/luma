@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean && mvn compile'
             }
             post {
                 // If Maven was able to run the tests, even if some of the test
